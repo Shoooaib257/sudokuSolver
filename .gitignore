@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+.env
+.env.*
+
+# IDEs
+.vscode/
+.idea/
+
+# OS / Flask
+.DS_Store
+instance/
+.webassets-cache
+
+# Logs
+*.log
+
+# Data (images/uploads)
+data/*
+!data/.gitkeep
+
+# ML models
+*.h5
+*.pt
+*.onnx
+
+# Build artifacts
+dist/
+build/
