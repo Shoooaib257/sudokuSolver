@@ -33,3 +33,7 @@ data/*
 # Build artifacts
 dist/
 build/
+
+# Images generated during testing
+*.jpg
+*.png
