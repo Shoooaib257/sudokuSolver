@@ -8,7 +8,8 @@ from backend.app.services.image_processor import (
     warp_perspective,
     split_cells,
     clean_cell,
-    is_cell_empty
+    is_cell_empty,
+    extract_board
 )
 
 IMAGE_PATH = "data/sample_sudoku.jpg"
@@ -56,16 +57,14 @@ def main():
     for i in range(3):
         for j in range(3):
             cleaned = clean_cell(cells[i][j])
-            cv2.imwrite(f"clean_cell_{i}_{j}.jpg", cleaned)
-    
-    for i in range(3):
-        for j in range(3):
-            cleaned = clean_cell(cells[i][j])
-
-            if is_cell_empty(cleaned):
-                print(f"Cell {i},{j} is EMPTY")
-            else:
+            if cleaned is not None:
+                cv2.imwrite(f"clean_cell_{i}_{j}.jpg", cleaned)
                 print(f"Cell {i},{j} has a digit")
+            else:
+                print(f"Cell {i},{j} is EMPTY")
+
+    board = extract_board(cells)
+
 
     print("Saved:")
     print("- thresh_output.jpg")
@@ -73,6 +72,27 @@ def main():
     print("- warped_output.jpg")
     print("- sample cell images (cell_0_0.jpg ...)")
     print("Saved cleaned cells")
+    print("\nDetected Sudoku Board:")
+    for r, row in enumerate(board):
+        print(f"Row {r}: {row}")
+
+    valid = any(any(cell != 0 for cell in row) for row in board)
+
+    if not valid:
+        print("OCR failed — empty board detected")
+        return
+
+    from backend.app.services.solver import solve_sudoku
+
+    solution = [row[:] for row in board]
+
+    if solve_sudoku(solution):
+        print("\nSolved Board:")
+        for row in solution:
+            print(row)
+    else:
+        print("No solution found")
+
 
 
 if __name__ == "__main__":
